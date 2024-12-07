@@ -25,7 +25,7 @@ const mcqs = [
     ]
   },
   {
-    category: "Activity Level Problems",
+    category: "Activity Level Problems - Overactivity / Hyperactivity",
     questions: [
       "Restlessness - either fidgeting or being constantly on the go.",
       "Diminished need for sleep.",
@@ -33,6 +33,17 @@ const mcqs = [
       "Difficulty listening.",
       "Restlessness during sleep (kicks covers off, moves constantly).",
       "Dislike of situations which require attention and being still."
+    ]
+  },
+  {
+    category: "Activity Level Problems - Underactivity",
+    questions: [
+      "Lethargic.",
+      "Daydreaming, spiciness.",
+      "Failure to complete tasks.",
+      "Inattention.",
+      "Lacking in leadership.",
+      "Difficulty in getting things done."
     ]
   },
   {
@@ -59,6 +70,41 @@ const mcqs = [
       "Rushes through work.",
       "Works too slowly.",
       "Procrastinates; bills, taxes, etc., put off until the last minute."
+    ]
+  },
+  {
+    category: "Emotional Difficulties",
+    questions: [
+      "Frequent and unpredictable mood swings.",
+      "Irritability.",
+      "Underreactive to pain / insensitive to danger.",
+      "Easily overstimulated; hard to stop once 'revved' up.",
+      "Low frustration tolerance; excessive emotional reaction.",
+      "Angry outbursts.",
+      "Moodiness / lack of energy.",
+      "Low self-esteem.",
+      "Immaturity."
+    ]
+  },
+  {
+    category: "Poor Peer Relations",
+    questions: [
+      "Difficulty following the rules of social interactions.",
+      "Rejected or avoided by peers.",
+      "Avoids group activity; a loner.",
+      "'Bosses' other people; wants to be a leader.",
+      "Critical of others."
+    ]
+  },
+  {
+    category: "Impaired Family Relations",
+    questions: [
+      "Easily frustrated with spouse or children; overreacts.",
+      "Sees things from own point of view; does not negotiate differences well.",
+      "Underdeveloped sense of responsibility.",
+      "Poor manager of money.",
+      "Unreasonable; demanding.",
+      "Spends excessive amount of time at work because of inefficiency, leaving little time for family."
     ]
   }
 ];
@@ -103,47 +149,18 @@ function renderMCQs() {
 
 function calculateScore() {
   const results = mcqs.map((section, sectionIndex) => {
-    let sectionScore = 0;
+    let score = 0;
     section.questions.forEach((_, questionIndex) => {
       const selected = document.querySelector(`input[name="section${sectionIndex}-question${questionIndex}"]:checked`);
-      if (selected) {
-        sectionScore += parseInt(selected.value);
-      }
+      score += parseInt(selected?.value || 0);
     });
-    const possibleScore = section.questions.length * 3;
-    const percentage = Math.round((sectionScore / possibleScore) * 100);
-    return {
-      category: section.category,
-      score: sectionScore,
-      possibleScore,
-      percentage
-    };
-  });
-  return results;
-}
-
-function handleSubmit() {
-  const scores = calculateScore();
-  resultDiv.innerHTML = `<h2>Results</h2>`;
-  scores.forEach(score => {
-    resultDiv.innerHTML += `
-      <h3>${score.category}</h3>
-      <p>Score: ${score.score} / ${score.possibleScore}</p>
-      <p>Percentage: ${score.percentage}%</p>
-      <p>Interpretation: ${
-        score.percentage < 50 
-          ? "Mild to Moderate Difficulties" 
-          : score.percentage < 70 
-            ? "Moderate to Severe Difficulties" 
-            : "Major Interference"
-      }</p>
-    `;
+    return score;
   });
 }
 
 renderMCQs();
 
-submitBtn.addEventListener('click', (event) => {
-  event.preventDefault();
-  handleSubmit();
+submitBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  calculateScore();
 });
