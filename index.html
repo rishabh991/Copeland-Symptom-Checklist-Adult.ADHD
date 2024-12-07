@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Copeland Symptom Checklist - Adult ADHD</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .instructions {
+      background-color: #ffffff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .question {
+      background-color: #ffffff;
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .question p {
+      font-weight: bold;
+    }
+    .options label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    #submit-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #submit-btn:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Copeland Symptom Checklist</h1>
+  <h2>Adult ADHD Assessment</h2>
+  
+  <div class="instructions">
+    <p>This checklist was developed to help determine the presence of ADHD symptoms. Select the option that best represents the degree to which the behavior is characteristic of you. The responses range from "Not at all" (0 points) to "Very much" (3 points).</p>
+    <p>Once you complete all the questions, click "Submit" to receive a score and interpretation for each category.</p>
+  </div>
+  
+  <form id="mcq-form"></form>
+  
+  <button id="submit-btn">Submit</button>
+  
+  <div id="result"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
