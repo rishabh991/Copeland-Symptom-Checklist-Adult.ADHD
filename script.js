@@ -162,14 +162,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const percentage = ((score / maxScore) * 100).toFixed(2);
       let interpretation = '';
 
-      if (percentage < 35) {
-        interpretation = 'Mild to Moderate Difficulties';
-      } else if (percentage >= 35 && percentage < 50) {
+      if (percentage >= 35 && percentage < 50) {
         interpretation = 'Mild to Moderate Difficulties';
       } else if (percentage >= 50 && percentage < 70) {
         interpretation = 'Moderate to Severe Difficulties';
       } else if (percentage >= 70) {
         interpretation = 'Major Interference';
+      } else {
+        interpretation = 'Minimal Difficulties';
       }
 
       return {
@@ -181,7 +181,23 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
 
-    return results;
+    // Calculate overall score
+    const totalScore = results.reduce((acc, curr) => acc + curr.score, 0);
+    const totalMaxScore = mcqs.reduce((acc, curr) => acc + (curr.questions.length * 3), 0);
+    const overallPercentage = ((totalScore / totalMaxScore) * 100).toFixed(2);
+    let overallInterpretation = '';
+
+    if (overallPercentage >= 35 && overallPercentage < 50) {
+      overallInterpretation = 'Mild to Moderate Difficulties';
+    } else if (overallPercentage >= 50 && overallPercentage < 70) {
+      overallInterpretation = 'Moderate to Severe Difficulties';
+    } else if (overallPercentage >= 70) {
+      overallInterpretation = 'Major Interference';
+    } else {
+      overallInterpretation = 'Minimal Difficulties';
+    }
+
+    return { results, overall: { score: totalScore, maxScore: totalMaxScore, percentage: overallPercentage, interpretation: overallInterpretation } };
   }
 
   function validateForm() {
@@ -197,7 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return allAnswered;
   }
 
-  function displayResults(name, date, results) {
+  function displayResults(name, date, scores) {
+    const { results, overall } = scores;
     resultDiv.innerHTML = ''; // Clear previous results
 
     const namePara = document.createElement('p');
@@ -208,19 +225,13 @@ document.addEventListener('DOMContentLoaded', () => {
     datePara.innerHTML = `<strong>Date Completed:</strong> ${date}`;
     resultDiv.appendChild(datePara);
 
+    // Per-category results table
     const table = document.createElement('table');
-    table.style.width = '100%';
-    table.style.borderCollapse = 'collapse';
-    table.style.marginTop = '20px';
 
     const headerRow = document.createElement('tr');
     ['Category', 'Score', 'Max Score', 'Percentage', 'Interpretation'].forEach(headerText => {
       const th = document.createElement('th');
       th.textContent = headerText;
-      th.style.border = '1px solid #ddd';
-      th.style.padding = '8px';
-      th.style.backgroundColor = '#f2f2f2';
-      th.style.textAlign = 'left';
       headerRow.appendChild(th);
     });
     table.appendChild(headerRow);
@@ -231,8 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
       [result.category, result.score, result.maxScore, `${result.percentage}%`, result.interpretation].forEach(text => {
         const td = document.createElement('td');
         td.textContent = text;
-        td.style.border = '1px solid #ddd';
-        td.style.padding = '8px';
         row.appendChild(td);
       });
 
@@ -241,6 +250,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resultDiv.appendChild(table);
 
+    // Overall result
+    const overallDiv = document.createElement('div');
+    overallDiv.classList.add('overall-result');
+
+    const overallTitle = document.createElement('h3');
+    overallTitle.textContent = 'Overall Assessment';
+    overallDiv.appendChild(overallTitle);
+
+    const overallDetails = document.createElement('p');
+    overallDetails.innerHTML = `<strong>Overall Score:</strong> ${overall.score} / ${overall.maxScore}<br>
+                                <strong>Overall Percentage:</strong> ${overall.percentage}%<br>
+                                <strong>Interpretation:</strong> ${overall.interpretation}`;
+    overallDiv.appendChild(overallDetails);
+
+    resultDiv.appendChild(overallDiv);
+
     // Add PDF download button
     const downloadBtn = document.createElement('button');
     downloadBtn.id = 'download-pdf';
@@ -248,11 +273,11 @@ document.addEventListener('DOMContentLoaded', () => {
     resultDiv.appendChild(downloadBtn);
 
     downloadBtn.addEventListener('click', () => {
-      generatePDF(name, date, results);
+      generatePDF(name, date, results, overall);
     });
   }
 
-  function generatePDF(name, date, results) {
+  function generatePDF(name, date, results, overall) {
     const doc = new jsPDF();
 
     doc.setFontSize(16);
@@ -264,35 +289,32 @@ document.addEventListener('DOMContentLoaded', () => {
     doc.text(`Name: ${name}`, 20, 45);
     doc.text(`Date Completed: ${date}`, 20, 52);
 
-    const headers = [['Category', 'Score', 'Max Score', 'Percentage', 'Interpretation']];
-
-    const data = results.map(r => [r.category, r.score.toString(), r.maxScore.toString(), `${r.percentage}%`, r.interpretation]);
+    // Per-category table
+    const categoryHeaders = [['Category', 'Score', 'Max Score', 'Percentage', 'Interpretation']];
+    const categoryData = results.map(r => [r.category, r.score.toString(), r.maxScore.toString(), `${r.percentage}%`, r.interpretation]);
 
     doc.autoTable({
-      head: headers,
-      body: data,
+      head: categoryHeaders,
+      body: categoryData,
       startY: 60,
       styles: { fontSize: 10 },
       headStyles: { fillColor: [242, 242, 242] },
       theme: 'grid'
     });
 
+    // Overall result
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(14);
+    doc.text('Overall Assessment', 20, finalY);
+    doc.setFontSize(12);
+    doc.text(`Overall Score: ${overall.score} / ${overall.maxScore}`, 20, finalY + 10);
+    doc.text(`Overall Percentage: ${overall.percentage}%`, 20, finalY + 17);
+    doc.text(`Interpretation: ${overall.interpretation}`, 20, finalY + 24);
+
     doc.save('Copeland_Symptom_Checklist_Results.pdf');
   }
 
-  // Load autoTable plugin for jsPDF
-  // Note: autoTable is a separate plugin; include it via CDN
-  // Add this script tag to index.html if not already included
-  // <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
-  // Since we cannot modify index.html here, we can dynamically load the script
-  const script = document.createElement('script');
-  script.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js";
-  script.onload = () => {
-    // Initialize after autoTable is loaded
-    renderMCQs();
-  };
-  document.head.appendChild(script);
+  renderMCQs();
 
   submitBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -310,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const results = calculateScore();
-    displayResults(name, date, results);
+    const scores = calculateScore();
+    displayResults(name, date, scores);
   });
 });
