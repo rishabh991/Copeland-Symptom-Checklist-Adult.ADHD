@@ -1,7 +1,6 @@
 const { jsPDF } = window.jspdf;
 
 const mcqs = [
-  // Categories with questions
   { 
     category: "Inattention / Distractibility", 
     questions: [
@@ -9,7 +8,9 @@ const mcqs = [
       "Difficulty completing tasks.",
       "Daydreaming.",
       "Easily distracted.",
-      "Nicknames such as: 'spacey' or 'dreamer'."
+      "Nicknames such as: 'spacey' or 'dreamer'.",
+      "Engages in much activity but accomplishes little.",
+      "Enthusiastic beginnings but poor endings."
     ] 
   },
   { 
@@ -17,16 +18,16 @@ const mcqs = [
     questions: [
       "Excitability.",
       "Low frustration tolerance.",
-      "Acts before thinking."
+      "Acts before thinking.",
+      "Disorganization.",
+      "Poor planning ability.",
+      "Excessively shifts from one activity to another.",
+      "Difficulty in group situations requiring patience and taking turns.",
+      "Interrupts frequently."
     ] 
   }
 ];
 
-const form = document.getElementById('mcq-form');
-const submitBtn = document.getElementById('submit-btn');
-const resultDiv = document.getElementById('result');
-
-// Render MCQ form
 function renderMCQs() {
   mcqs.forEach((section, sectionIndex) => {
     const sectionTitle = document.createElement('h3');
@@ -86,23 +87,12 @@ function generatePDF(userData, scores) {
 
 submitBtn.addEventListener('click', (event) => {
   event.preventDefault();
-  
   const userData = {
     name: document.getElementById('user-name').value,
     date: document.getElementById('user-date').value,
     completedBy: document.getElementById('completed-by').value
   };
-  
   const scores = calculateScore();
-  
-  resultDiv.innerHTML = `<h2>Results</h2>`;
-  scores.forEach((score, index) => {
-    resultDiv.innerHTML += `
-      <h3>${mcqs[index].category}</h3>
-      <p>Score: ${score}</p>
-    `;
-  });
-  
   generatePDF(userData, scores);
 });
 
