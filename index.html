@@ -90,6 +90,30 @@
     #download-pdf:hover {
       background-color: #218838;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .overall-result {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #e9ecef;
+      border-radius: 8px;
+    }
+    .overall-result h3 {
+      margin-top: 0;
+    }
   </style>
 </head>
 <body>
@@ -99,7 +123,7 @@
   
   <div class="instructions">
     <p>This checklist was developed to help determine the presence of ADHD symptoms. Select the option that best represents the degree to which the behavior is characteristic of you. The responses range from "Not at all" (0 points) to "Very much" (3 points).</p>
-    <p>Once you complete all the questions, click "Submit" to receive a score and interpretation for each category.</p>
+    <p>Once you complete all the questions, click "Submit" to receive a score and interpretation for each category as well as an overall assessment.</p>
   </div>
   
   <form id="mcq-form">
@@ -118,6 +142,8 @@
 
   <!-- Include jsPDF from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Include jsPDF autoTable plugin from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
