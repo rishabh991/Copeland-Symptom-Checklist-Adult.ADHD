@@ -13,6 +13,19 @@
     h1, h2 {
       text-align: center;
     }
+    .form-field {
+      margin-bottom: 20px;
+    }
+    .form-field label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .form-field input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+    }
     .instructions {
       background-color: #ffffff;
       padding: 20px;
@@ -64,16 +77,32 @@
   <h2>Adult ADHD Assessment</h2>
   
   <div class="instructions">
-    <p>This checklist was developed to help determine the presence of ADHD symptoms. Select the option that best represents the degree to which the behavior is characteristic of you. The responses range from "Not at all" (0 points) to "Very much" (3 points).</p>
-    <p>Once you complete all the questions, click "Submit" to receive a score and interpretation for each category.</p>
+    <p>This checklist helps to identify ADHD symptoms. Complete the form by selecting the degree to which the behavior is characteristic of you. Click "Submit" to see your results and generate a PDF report.</p>
   </div>
-  
+
+  <!-- User Information -->
+  <div class="form-field">
+    <label for="user-name">Name</label>
+    <input type="text" id="user-name" placeholder="Enter your name" required>
+  </div>
+
+  <div class="form-field">
+    <label for="user-date">Date</label>
+    <input type="date" id="user-date" required>
+  </div>
+
+  <div class="form-field">
+    <label for="completed-by">Completed by</label>
+    <input type="text" id="completed-by" placeholder="Who completed this form?" required>
+  </div>
+
   <form id="mcq-form"></form>
-  
+
   <button id="submit-btn">Submit</button>
   
   <div id="result"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
