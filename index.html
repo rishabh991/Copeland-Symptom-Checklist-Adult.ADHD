@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Copeland Symptom Checklist - Adult ADHD</title>
   <style>
     body {
@@ -13,25 +13,31 @@
     h1, h2 {
       text-align: center;
     }
-    .form-field {
-      margin-bottom: 20px;
-    }
-    .form-field label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-    .form-field input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-    }
     .instructions {
       background-color: #ffffff;
       padding: 20px;
       margin-bottom: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      background-color: #ffffff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     .question {
       background-color: #ffffff;
@@ -46,6 +52,7 @@
     .options label {
       display: block;
       margin-bottom: 8px;
+      cursor: pointer;
     }
     #submit-btn {
       display: block;
@@ -69,6 +76,20 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+    #download-pdf {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    #download-pdf:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
@@ -77,31 +98,25 @@
   <h2>Adult ADHD Assessment</h2>
   
   <div class="instructions">
-    <p>This checklist helps to identify ADHD symptoms. Complete the form by selecting the degree to which the behavior is characteristic of you. Click "Submit" to see your results and generate a PDF report.</p>
+    <p>This checklist was developed to help determine the presence of ADHD symptoms. Select the option that best represents the degree to which the behavior is characteristic of you. The responses range from "Not at all" (0 points) to "Very much" (3 points).</p>
+    <p>Once you complete all the questions, click "Submit" to receive a score and interpretation for each category.</p>
   </div>
-
-  <!-- User Information -->
-  <div class="form-field">
-    <label for="user-name">Name</label>
-    <input type="text" id="user-name" placeholder="Enter your name" required>
-  </div>
-
-  <div class="form-field">
-    <label for="user-date">Date</label>
-    <input type="date" id="user-date" required>
-  </div>
-
-  <div class="form-field">
-    <label for="completed-by">Completed by</label>
-    <input type="text" id="completed-by" placeholder="Who completed this form?" required>
-  </div>
-
-  <form id="mcq-form"></form>
-
+  
+  <form id="mcq-form">
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+      
+      <label for="date">Date Completed:</label>
+      <input type="date" id="date" name="date" required>
+    </div>
+  </form>
+  
   <button id="submit-btn">Submit</button>
   
   <div id="result"></div>
 
+  <!-- Include jsPDF from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
 </body>
