@@ -1,0 +1,1 @@
+# Copeland-Symptom-Checklist-Adult.ADHD-
