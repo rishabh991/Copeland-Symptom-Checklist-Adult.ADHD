@@ -1,111 +1,24 @@
+const { jsPDF } = window.jspdf;
+
 const mcqs = [
-  {
-    category: "Inattention / Distractibility",
+  // Categories with questions
+  { 
+    category: "Inattention / Distractibility", 
     questions: [
       "A short attention span, especially for low-interest activities.",
       "Difficulty completing tasks.",
       "Daydreaming.",
       "Easily distracted.",
-      "Nicknames such as: 'spacey' or 'dreamer'.",
-      "Engages in much activity but accomplishes little.",
-      "Enthusiastic beginnings but poor endings."
-    ]
+      "Nicknames such as: 'spacey' or 'dreamer'."
+    ] 
   },
-  {
-    category: "Impulsivity",
+  { 
+    category: "Impulsivity", 
     questions: [
       "Excitability.",
       "Low frustration tolerance.",
-      "Acts before thinking.",
-      "Disorganization.",
-      "Poor planning ability.",
-      "Excessively shifts from one activity to another.",
-      "Difficulty in group situations which require patience and taking turns.",
-      "Interrupts frequently."
-    ]
-  },
-  {
-    category: "Activity Level Problems - Overactivity / Hyperactivity",
-    questions: [
-      "Restlessness - either fidgeting or being constantly on the go.",
-      "Diminished need for sleep.",
-      "Excessive talking.",
-      "Difficulty listening.",
-      "Restlessness during sleep (kicks covers off, moves constantly).",
-      "Dislike of situations which require attention and being still."
-    ]
-  },
-  {
-    category: "Activity Level Problems - Underactivity",
-    questions: [
-      "Lethargic.",
-      "Daydreaming, spiciness.",
-      "Failure to complete tasks.",
-      "Inattention.",
-      "Lacking in leadership.",
-      "Difficulty in getting things done."
-    ]
-  },
-  {
-    category: "Noncompliance",
-    questions: [
-      "Does not cooperate; determined to do things own way.",
-      "Argumentative.",
-      "Disregards socially-accepted behavioral expectations.",
-      "'Forgets' unintentionally.",
-      "'Forgets' intentionally as an excuse."
-    ]
-  },
-  {
-    category: "Underachievement / Disorganization / Learning Problems",
-    questions: [
-      "Underachievement in relation to ability.",
-      "Frequent job changes.",
-      "Loses things like keys, wallet, lists, belongings, etc.",
-      "Auditory memory and auditory processing problems.",
-      "Learning disabilities or learning problems.",
-      "Poor handwriting.",
-      "'Messy' or 'sloppy' work.",
-      "Work assignments are often not completed satisfactorily.",
-      "Rushes through work.",
-      "Works too slowly.",
-      "Procrastinates; bills, taxes, etc., put off until the last minute."
-    ]
-  },
-  {
-    category: "Emotional Difficulties",
-    questions: [
-      "Frequent and unpredictable mood swings.",
-      "Irritability.",
-      "Underreactive to pain / insensitive to danger.",
-      "Easily overstimulated; hard to stop once 'revved' up.",
-      "Low frustration tolerance; excessive emotional reaction.",
-      "Angry outbursts.",
-      "Moodiness / lack of energy.",
-      "Low self-esteem.",
-      "Immaturity."
-    ]
-  },
-  {
-    category: "Poor Peer Relations",
-    questions: [
-      "Difficulty following the rules of social interactions.",
-      "Rejected or avoided by peers.",
-      "Avoids group activity; a loner.",
-      "'Bosses' other people; wants to be a leader.",
-      "Critical of others."
-    ]
-  },
-  {
-    category: "Impaired Family Relations",
-    questions: [
-      "Easily frustrated with spouse or children; overreacts.",
-      "Sees things from own point of view; does not negotiate differences well.",
-      "Underdeveloped sense of responsibility.",
-      "Poor manager of money.",
-      "Unreasonable; demanding.",
-      "Spends excessive amount of time at work because of inefficiency, leaving little time for family."
-    ]
+      "Acts before thinking."
+    ] 
   }
 ];
 
@@ -113,6 +26,7 @@ const form = document.getElementById('mcq-form');
 const submitBtn = document.getElementById('submit-btn');
 const resultDiv = document.getElementById('result');
 
+// Render MCQ form
 function renderMCQs() {
   mcqs.forEach((section, sectionIndex) => {
     const sectionTitle = document.createElement('h3');
@@ -127,9 +41,6 @@ function renderMCQs() {
       questionTitle.textContent = `${questionIndex + 1}. ${question}`;
       questionDiv.appendChild(questionTitle);
       
-      const optionsDiv = document.createElement('div');
-      optionsDiv.classList.add('options');
-      
       ['Not at all', 'Just a little', 'Pretty much', 'Very much'].forEach((option, optionIndex) => {
         const label = document.createElement('label');
         const input = document.createElement('input');
@@ -138,17 +49,16 @@ function renderMCQs() {
         input.value = optionIndex;
         label.appendChild(input);
         label.appendChild(document.createTextNode(option));
-        optionsDiv.appendChild(label);
+        questionDiv.appendChild(label);
       });
       
-      questionDiv.appendChild(optionsDiv);
       form.appendChild(questionDiv);
     });
   });
 }
 
 function calculateScore() {
-  const results = mcqs.map((section, sectionIndex) => {
+  const scores = mcqs.map((section, sectionIndex) => {
     let score = 0;
     section.questions.forEach((_, questionIndex) => {
       const selected = document.querySelector(`input[name="section${sectionIndex}-question${questionIndex}"]:checked`);
@@ -156,11 +66,44 @@ function calculateScore() {
     });
     return score;
   });
+
+  return scores;
 }
 
-renderMCQs();
+function generatePDF(userData, scores) {
+  const doc = new jsPDF();
+  doc.text(`Copeland Symptom Checklist Report`, 10, 10);
+  doc.text(`Name: ${userData.name}`, 10, 20);
+  doc.text(`Date: ${userData.date}`, 10, 30);
+  doc.text(`Completed by: ${userData.completedBy}`, 10, 40);
+  
+  scores.forEach((score, index) => {
+    doc.text(`${mcqs[index].category}: ${score}`, 10, 50 + (index * 10));
+  });
+  
+  doc.save('ADHD_Report.pdf');
+}
 
-submitBtn.addEventListener('click', (e) => {
-  e.preventDefault();
-  calculateScore();
+submitBtn.addEventListener('click', (event) => {
+  event.preventDefault();
+  
+  const userData = {
+    name: document.getElementById('user-name').value,
+    date: document.getElementById('user-date').value,
+    completedBy: document.getElementById('completed-by').value
+  };
+  
+  const scores = calculateScore();
+  
+  resultDiv.innerHTML = `<h2>Results</h2>`;
+  scores.forEach((score, index) => {
+    resultDiv.innerHTML += `
+      <h3>${mcqs[index].category}</h3>
+      <p>Score: ${score}</p>
+    `;
+  });
+  
+  generatePDF(userData, scores);
 });
+
+renderMCQs();
